@@ -1,4 +1,3 @@
-// client/src/components/PropertyCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +9,8 @@ const cityDisplayNames = {
 };
 
 export default function PropertyCard({ property }) {
+  const isSuspicious = property.fraudProbability > 0.7 || !property.images || property.images.length === 0;
+
   return (
     <div className="property-card-outer" style={{ padding: '0.5rem' }}>
       <div
@@ -24,8 +25,7 @@ export default function PropertyCard({ property }) {
           maxWidth: '24rem',
           marginLeft: 'auto',
           marginRight: 'auto',
-          // Ось тут міняємо колір обрамлення, якщо назва співпадає:
-          border: property.title === 'Трикімнатна біля метро Лівобережна' ? '2px solid #f43f5e' : '2px solid transparent',
+          border: isSuspicious ? '2px solid #f43f5e' : '2px solid transparent',
           transition: 'box-shadow 0.5s, border 0.3s',
         }}
       >
@@ -44,12 +44,11 @@ export default function PropertyCard({ property }) {
           />
         )}
 
-        {/* Якщо це саме ця квартира — показуємо плашку "Увага!" */}
-        {property.title === 'Трикімнатна біля метро Лівобережна' && (
+        {isSuspicious && (
           <span
             style={{
               display: 'inline-block',
-              background: '#f43f5e',       // червоний фон
+              background: '#f43f5e',
               color: 'white',
               fontSize: '0.75rem',
               fontWeight: '600',
@@ -78,6 +77,7 @@ export default function PropertyCard({ property }) {
         >
           {property.title}
         </h2>
+
         <p
           style={{
             color: '#111827',
@@ -88,6 +88,7 @@ export default function PropertyCard({ property }) {
         >
           Ціна: {property.price.toLocaleString()} ₴
         </p>
+
         {property.rooms && (
           <p style={{ color: '#374151', marginBottom: '0.25rem' }}>Кімнат: {property.rooms}</p>
         )}
@@ -99,6 +100,7 @@ export default function PropertyCard({ property }) {
             Місто: {cityDisplayNames[property.city] || property.city}
           </p>
         )}
+
         <p
           style={{
             color: '#4b5563',
@@ -109,6 +111,7 @@ export default function PropertyCard({ property }) {
         >
           Джерело: {property.source === 'dom.ria' ? 'DOM.RIA' : 'OLX'}
         </p>
+
         <Link
           to={`/properties/${property.id}`}
           style={{
